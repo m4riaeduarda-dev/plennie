@@ -1,6 +1,6 @@
 # Plennie
 
-Aplicação web de organização financeira pessoal desenvolvida com HTML, CSS e JavaScript.
+Aplicação mobile de organização financeira pessoal desenvolvida com HTML, CSS e JavaScript.
 
 ## Funcionalidades
 
