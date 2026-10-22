@@ -364,16 +364,52 @@ function addDivida(){
     salvarEstado(); atualizarTudo(); mostrarToast("✅ Dívida em " + parcelas + "x!");
   } else mostrarToast("⚠️ Preencha corretamente", "erro");
 }
-function addGastoAvulso(){
+async function addGastoAvulso(){
   var nome = document.getElementById('gastoAvulsoNome').value.trim();
   var valor = parseFloat(document.getElementById('gastoAvulsoValor').value);
-  if (nome && !isNaN(valor) && valor > 0){
-    estado.gastosAvulsos.push({nome:nome, valor:valor});
+
+  if (!nome || !Number.isFinite(valor) || valor <= 0) {
+    mostrarToast("⚠️ Preencha corretamente", "erro");
+    return;
+  }
+
+  try {
+    var resposta = await fetch('/api/despesas', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        descricao: nome,
+        valor: valor,
+        data: new Date().toISOString().slice(0, 10),
+        categoria: 'Outros'
+      })
+    });
+
+    var resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(resultado.erro || 'Não foi possível cadastrar a despesa.');
+    }
+
+    estado.gastosAvulsos.push({
+      nome: nome,
+      valor: valor
+    });
+
     document.getElementById('gastoAvulsoNome').value = '';
     document.getElementById('gastoAvulsoValor').value = '';
-    salvarEstado(); atualizarTudo(); mostrarToast("✅ Gasto adicionado!");
-  } else mostrarToast("⚠️ Preencha corretamente", "erro");
+
+    salvarEstado();
+    atualizarTudo();
+    mostrarToast('✅ Gasto cadastrado no banco de dados!');
+  } catch (erro) {
+    console.error(erro);
+    mostrarToast('⚠️ Não foi possível salvar no banco.', 'erro');
+  }
 }
+
 function removerItem(tipo, idx){
   estado[tipo].splice(idx, 1);
   salvarEstado(); atualizarTudo();
