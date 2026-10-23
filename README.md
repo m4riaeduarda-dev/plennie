@@ -85,10 +85,14 @@ A API também realiza validações básicas dos dados enviados antes de efetuar 
 - Servidor backend utilizando Flask.
 - Criação do banco de dados SQLite.
 - Criação da tabela de despesas.
-- Endpoint para consulta de despesas.
-- Endpoint para cadastro de despesas.
+- Endpoint para consulta de despesas (`GET /api/despesas`).
+- Endpoint para cadastro de despesas (`POST /api/despesas`).
 - Validação básica dos dados recebidos pela API.
-- Teste de cadastro de despesa com resposta HTTP `201 Created`.
+- Teste manual de cadastro de despesa pela API, com resposta HTTP `201 Created`.
+- Correção de erro de sintaxe no JavaScript que impedia o carregamento das funções da interface.
+- Recuperação e teste do cadastro de gastos avulsos pela interface.
+- Implementação e teste de confirmação antes da exclusão de itens pela função `removerItem()`.
+- Formatação de valores monetários no padrão brasileiro, utilizando `pt-BR` e `BRL`.
 
 ## 7. Funcionalidades em desenvolvimento
 
@@ -100,6 +104,7 @@ A API também realiza validações básicas dos dados enviados antes de efetuar 
 - Testes automatizados.
 - Adaptação e preparação da aplicação para instalação em dispositivos Android.
 - Revisão de validações, segurança e experiência de uso.
+- Verificação da persistência da renda inicial e revisão das operações de exclusão nas diferentes áreas da aplicação.
 
 ## 8. Como executar o projeto
 

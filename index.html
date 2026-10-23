@@ -94,7 +94,7 @@ body { background-color:#FAFAFA; min-height:100vh; display:flex; flex-direction:
       <div class="form-section">
         <h3><i class="fas fa-money-bill-wave"></i> Renda mensal</h3>
         <div class="input-group">
-          <input type="number" id="rendaMensal" placeholder="R$ 0,00" value="4850">
+          <input type="number" id="rendaMensal" placeholder="R$ 0,00">
           <button class="btn btn-primary" onclick="salvarRenda()">Salvar renda</button>
         </div>
       </div>
@@ -277,7 +277,7 @@ function mostrarToast(msg, tipo) {
 /* =========== ESTADO =========== */
 var STORAGE_KEY = "plennie_v5";
 var estadoPadrao = {
-  renda: 4850,
+  renda: 0,
   despesasRecorrentes: [],
   dividas: [],
   gastosAvulsos: [],
@@ -410,10 +410,15 @@ async function addGastoAvulso(){
   }
 }
 
-function removerItem(tipo, idx){
+function removerItem(tipo, idx) {
+  if (!confirm('Tem certeza de que deseja remover este item?')) {
+    return;
+  }
+
   estado[tipo].splice(idx, 1);
-  salvarEstado(); atualizarTudo();
-  mostrarToast("🗑️ Item removido!");
+  salvarEstado();
+  atualizarTudo();
+  mostrarToast('🗑️ Item removido!');
 }
 
 /* =========== DESEJOS =========== */
@@ -530,6 +535,13 @@ function resetarTudo(){
 }
 
 /* =========== RENDER =========== */
+function formatarMoeda(valor) {
+    return Number(valor || 0).toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+    });
+}
+
 function atualizarTudo(){
   var tRec = 0, tParc = 0, tAvulso = 0;
   for (var i=0; i<estado.despesasRecorrentes.length; i++) tRec += Number(estado.despesasRecorrentes[i].valor) || 0;
@@ -539,25 +551,25 @@ function atualizarTudo(){
   var saldoLivre = getSaldoLivre();
 
   document.getElementById('resumoFinanceiro').innerHTML =
-    '<p><strong>Renda:</strong> R$ ' + Number(estado.renda).toFixed(2) + '</p>' +
-    '<p><strong>Despesas recorrentes:</strong> R$ ' + tRec.toFixed(2) + '</p>' +
-    '<p><strong>Parcelas mensais:</strong> R$ ' + tParc.toFixed(2) + '</p>' +
-    '<p><strong>Gastos avulsos:</strong> R$ ' + tAvulso.toFixed(2) + '</p>' +
-    '<p><strong>💰 Guardado em vaquinhas:</strong> R$ ' + tVaq.toFixed(2) + '</p>' +
-    '<p style="margin-top:8px; padding-top:8px; border-top:2px dashed #d2f0c2;"><strong>Saldo livre:</strong> R$ ' + saldoLivre.toFixed(2) + '</p>';
+    '<p><strong>Renda:</strong> ' + formatarMoeda(estado.renda) + '</p>' +
+    '<p><strong>Despesas recorrentes:</strong> ' + formatarMoeda(tRec) + '</p>' +
+    '<p><strong>Parcelas mensais:</strong> ' + formatarMoeda(tParc) + '</p>' +
+    '<p><strong>Gastos avulsos:</strong> ' + formatarMoeda(tAvulso) + '</p>' +
+    '<p><strong>💰 Guardado em vaquinhas:</strong> ' + formatarMoeda(tVaq) + '</p>' +
+    '<p style="margin-top:8px; padding-top:8px; border-top:2px dashed #d2f0c2;"><strong>Saldo livre:</strong> ' + formatarMoeda(saldoLivre) + '</p>';
 
   document.getElementById('listaDespesasRecorrentes').innerHTML = estado.despesasRecorrentes.map(function(d,i){
-    return '<li><i class="fas fa-receipt"></i> ' + d.nome + ' — R$ ' + Number(d.valor).toFixed(2) + ' <span class="mini-badge">recorrente</span>' +
+    return '<li><i class="fas fa-receipt"></i> ' + ' — ' + formatarMoeda(d.valor) + ' <span class="mini-badge">recorrente</span>' +
     '<button class="btn btn-danger" style="margin-left:auto;" onclick="removerItem(\'despesasRecorrentes\',' + i + ')">🗑️</button></li>';
   }).join('') || '<li style="color:#9aab8a; border-left-color:#eee;">Nenhuma despesa cadastrada.</li>';
 
   document.getElementById('listaDividas').innerHTML = estado.dividas.map(function(d,i){
-    return '<li><i class="fas fa-file-invoice"></i> ' + d.nome + ' — R$ ' + Number(d.valorTotal).toFixed(2) + ' (' + d.parcelasRestantes + 'x) parcela R$ ' + Number(d.parcelaMensal).toFixed(2) + ' <span class="mini-badge">parcelado</span>' +
+    return '<li><i class="fas fa-file-invoice"></i> ' + d.nome + ' — R$ ' + formatarMoeda(d.valorTotal) + ' (' + d.parcelasRestantes + 'x) parcela R$ ' + Number(d.parcelaMensal).toFixed(2) + ' <span class="mini-badge">parcelado</span>' +
     '<button class="btn btn-danger" style="margin-left:auto;" onclick="removerItem(\'dividas\',' + i + ')">🗑️</button></li>';
   }).join('') || '<li style="color:#9aab8a; border-left-color:#eee;">Nenhuma dívida cadastrada.</li>';
 
   document.getElementById('listaGastosAvulsos').innerHTML = estado.gastosAvulsos.map(function(g,i){
-    return '<li><i class="fas fa-tag"></i> ' + g.nome + ' — R$ ' + Number(g.valor).toFixed(2) +
+    return '<li><i class="fas fa-tag"></i> ' + g.nome + ' — ' + formatarMoeda(g.valor) +
     '<button class="btn btn-danger" style="margin-left:auto;" onclick="removerItem(\'gastosAvulsos\',' + i + ')">🗑️</button></li>';
   }).join('') || '<li style="color:#9aab8a; border-left-color:#eee;">Nenhum gasto cadastrado.</li>';
 

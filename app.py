@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from database import conectar, criar_tabelas
 
 app = Flask(__name__)
@@ -10,10 +10,7 @@ criar_tabelas()
 
 @app.route("/")
 def inicio():
-    return jsonify({
-        "projeto": "Plennie",
-        "mensagem": "Backend funcionando!"
-    })
+    return send_from_directory(app.root_path, "index.html")
 
 
 @app.route("/api/despesas", methods=["GET"])
