@@ -1,0 +1,12 @@
+# Ambiente virtual
+.venv/
+
+# Banco de dados
+*.db
+
+# Chaves privadas
+.secret_key
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
